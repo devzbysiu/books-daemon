@@ -1,10 +1,15 @@
 use std::fs::File;
 
+use crate::handler::FsEventHandler;
+use crate::processor::NewBookEventProcessor;
 use daemonize::Daemonize;
 use notify::{watcher, DebouncedEvent, RecursiveMode, Watcher};
 use std::path::Path;
 use std::sync::mpsc::{channel, Receiver};
 use std::time::Duration;
+
+mod handler;
+mod processor;
 
 fn main() {
     let stdout = File::create("/tmp/books-daemon.out").unwrap();
@@ -33,19 +38,5 @@ fn watch_for_added_books() {
         .watch("/tmp/test", RecursiveMode::Recursive)
         .unwrap();
 
-    handle_file_events(receiver);
-}
-
-fn handle_file_events(rx: Receiver<DebouncedEvent>) {
-    loop {
-        match rx.recv() {
-            Ok(DebouncedEvent::Create(p)) => process_new_book_event(p),
-            Ok(_) => println!("different event"),
-            Err(e) => eprint!("watch error: {:?}", e),
-        }
-    }
-}
-
-fn process_new_book_event<P: AsRef<Path>>(p: P) {
-    println!("new file created: {:?}", p.as_ref());
+    FsEventHandler::new(receiver, &NewBookEventProcessor::new()).handle();
 }
