@@ -32,17 +32,42 @@ mod test {
     use crate::provider::{EventProvider, FsEvent};
     use std::cell::RefCell;
     use std::path::{Path, PathBuf};
-    use std::sync::mpsc::{channel, Receiver, RecvError};
+    use std::sync::mpsc::RecvError;
 
     #[test]
-    fn test() {
+    fn test_processor_executed_when_new_file_appeared() {
         // given
         let processor_spy = EventProcessorSpy::new();
         let events = vec![FsEvent::NewFile(PathBuf::from(r"/test")), FsEvent::Stop];
+        let provider_stub = EventProviderStub::new(&events);
         // when
-        FsEventDispatcher::new(&EventProviderStub::new(events), &processor_spy).handle();
+        FsEventDispatcher::new(&provider_stub, &processor_spy).handle();
         // then
         assert_eq!(processor_spy.executed(), true);
+    }
+
+    #[test]
+    fn test_processor_not_executed_when_no_new_file_event_occured() {
+        // given
+        let processor_spy = EventProcessorSpy::new();
+        let stubbed_events = vec![FsEvent::Stop];
+        let provider_stub = EventProviderStub::new(&stubbed_events);
+        // when
+        FsEventDispatcher::new(&provider_stub, &processor_spy).handle();
+        // then
+        assert_eq!(processor_spy.executed(), false);
+    }
+
+    #[test]
+    fn test_processor_not_executed_when_other_event_occured() {
+        // given
+        let processor_spy = EventProcessorSpy::new();
+        let stubbed_events = vec![FsEvent::Other, FsEvent::Stop];
+        let provider_stub = EventProviderStub::new(&stubbed_events);
+        // when
+        FsEventDispatcher::new(&provider_stub, &processor_spy).handle();
+        // then
+        assert_eq!(processor_spy.executed(), false);
     }
 
     struct EventProviderStub {
@@ -51,7 +76,10 @@ mod test {
     }
 
     impl EventProviderStub {
-        fn new(events: Vec<FsEvent>) -> Self {
+        fn new(events: &[FsEvent]) -> Self {
+            if events.is_empty() {
+                panic!("events should have at least stop event present");
+            }
             EventProviderStub {
                 events: events.to_vec(),
                 current_event: RefCell::new(0),
@@ -85,7 +113,7 @@ mod test {
     }
 
     impl EventProcessor for EventProcessorSpy {
-        fn process<P: AsRef<Path>>(&self, path: P) {
+        fn process<P: AsRef<Path>>(&self, _path: P) {
             *self.executed.borrow_mut() = true;
         }
     }

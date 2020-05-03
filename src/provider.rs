@@ -8,6 +8,8 @@ pub(crate) trait EventProvider {
 
 #[derive(Debug, Clone)]
 pub(crate) enum FsEvent {
+    // for testing purposes
+    #[allow(dead_code)]
     Stop,
     NewFile(PathBuf),
     Other,
