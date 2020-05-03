@@ -17,3 +17,4 @@ impl EventProcessor for NewBookEventProcessor {
         println!("new file created: {:?}", path.as_ref());
     }
 }
+

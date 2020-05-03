@@ -1,25 +1,25 @@
 use crate::processor::EventProcessor;
-use notify::DebouncedEvent;
-use std::sync::mpsc::Receiver;
+use crate::provider::{EventProvider, FsEvent};
 
-pub(crate) struct FsEventHandler<'a, T: EventProcessor> {
-    receiver: Receiver<DebouncedEvent>,
-    processor: &'a T,
+pub(crate) struct FsEventDispatcher<'a, R: EventProvider, P: EventProcessor> {
+    provider: &'a R,
+    processor: &'a P,
 }
 
-impl<'a, P: EventProcessor> FsEventHandler<'a, P> {
-    pub(crate) fn new(receiver: Receiver<DebouncedEvent>, processor: &'a P) -> Self {
-        Self {
-            receiver,
+impl<'a, R: EventProvider, P: EventProcessor> FsEventDispatcher<'a, R, P> {
+    pub(crate) fn new(provider: &'a R, processor: &'a P) -> Self {
+        FsEventDispatcher {
+            provider,
             processor,
         }
     }
 
     pub(crate) fn handle(&self) {
         loop {
-            match self.receiver.recv() {
-                Ok(DebouncedEvent::Create(p)) => self.processor.process(p),
-                Ok(_) => println!("different event"),
+            match self.provider.next() {
+                Ok(FsEvent::NewFile(p)) => self.processor.process(p),
+                Ok(FsEvent::Other) => println!("different event"),
+                Ok(FsEvent::Stop) => break,
                 Err(e) => eprint!("watch error: {:?}", e),
             }
         }
@@ -28,7 +28,7 @@ impl<'a, P: EventProcessor> FsEventHandler<'a, P> {
 
 #[cfg(test)]
 mod test {
-    use super::{EventProcessor, FsEventHandler};
+    use super::{EventProcessor, FsEventDispatcher};
     use std::cell::RefCell;
     use std::path::Path;
     use std::sync::mpsc::channel;
@@ -36,7 +36,7 @@ mod test {
     #[test]
     fn test() {
         let (sender, receiver) = channel();
-        FsEventHandler::new(receiver, &EventProcessorSpy::new()).handle();
+        FsEventDispatcher::new(receiver, &EventProcessorSpy::new()).handle();
     }
 
     struct EventProcessorSpy {

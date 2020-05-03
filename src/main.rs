@@ -1,7 +1,8 @@
 use std::fs::File;
 
-use crate::handler::FsEventHandler;
+use crate::handler::FsEventDispatcher;
 use crate::processor::NewBookEventProcessor;
+use crate::provider::DebouncedEventAdapter;
 use daemonize::Daemonize;
 use notify::{watcher, RecursiveMode, Watcher};
 use std::sync::mpsc::channel;
@@ -9,6 +10,7 @@ use std::time::Duration;
 
 mod handler;
 mod processor;
+mod provider;
 
 fn main() {
     let stdout = File::create("/tmp/books-daemon.out").unwrap();
@@ -37,5 +39,9 @@ fn watch_for_added_books() {
         .watch("/tmp/test", RecursiveMode::Recursive)
         .unwrap();
 
-    FsEventHandler::new(receiver, &NewBookEventProcessor::new()).handle();
+    FsEventDispatcher::new(
+        &DebouncedEventAdapter::new(receiver),
+        &NewBookEventProcessor::new(),
+    )
+    .handle();
 }
