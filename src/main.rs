@@ -3,9 +3,8 @@ use std::fs::File;
 use crate::handler::FsEventHandler;
 use crate::processor::NewBookEventProcessor;
 use daemonize::Daemonize;
-use notify::{watcher, DebouncedEvent, RecursiveMode, Watcher};
-use std::path::Path;
-use std::sync::mpsc::{channel, Receiver};
+use notify::{watcher, RecursiveMode, Watcher};
+use std::sync::mpsc::channel;
 use std::time::Duration;
 
 mod handler;
