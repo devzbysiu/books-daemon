@@ -6,6 +6,7 @@ pub(crate) trait EventProvider {
     fn next(&self) -> Result<FsEvent, RecvError>;
 }
 
+#[derive(Debug, Clone)]
 pub(crate) enum FsEvent {
     Stop,
     NewFile(PathBuf),
