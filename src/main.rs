@@ -18,7 +18,7 @@ fn main() {
 
     let daemonize = Daemonize::new()
         .pid_file("/tmp/books-daemon.pid")
-        .working_directory("/tmp/test")
+        .working_directory("/home/zbychu/books")
         .stdout(stdout)
         .stderr(stderr)
         .exit_action(|| println!("Executed before master process exits"))
@@ -36,7 +36,7 @@ fn watch_for_added_books() {
 
     let mut watcher = watcher(sender, Duration::from_secs(2)).unwrap();
     watcher
-        .watch("/tmp/test", RecursiveMode::Recursive)
+        .watch("/home/zbychu/books", RecursiveMode::Recursive)
         .unwrap();
 
     FsEventDispatcher::new(
