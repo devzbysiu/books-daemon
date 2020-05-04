@@ -1,6 +1,6 @@
 use std::fs::File;
 
-use crate::handler::FsEventDispatcher;
+use crate::dispatcher::FsEventDispatcher;
 use crate::processor::NewBookEventProcessor;
 use crate::provider::DebouncedEventAdapter;
 use daemonize::Daemonize;
@@ -8,7 +8,7 @@ use notify::{watcher, RecursiveMode, Watcher};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
-mod handler;
+mod dispatcher;
 mod processor;
 mod provider;
 

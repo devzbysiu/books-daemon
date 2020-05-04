@@ -32,6 +32,7 @@ impl<'a, R: EventProvider, P: EventProcessor> FsEventDispatcher<'a, R, P> {
 mod test {
     use super::{EventProcessor, FsEventDispatcher};
     use crate::provider::{EventProvider, FsEvent};
+    use anyhow::Result;
     use std::cell::RefCell;
     use std::path::{Path, PathBuf};
     use std::sync::mpsc::RecvError;
@@ -43,7 +44,9 @@ mod test {
         let events = vec![FsEvent::NewFile(PathBuf::from(r"/test")), FsEvent::Stop];
         let provider_stub = EventProviderStub::new(&events);
         // when
-        FsEventDispatcher::new(&provider_stub, &processor_spy).handle();
+        FsEventDispatcher::new(&provider_stub, &processor_spy)
+            .handle()
+            .unwrap();
         // then
         assert_eq!(processor_spy.executed(), true);
     }
@@ -55,7 +58,9 @@ mod test {
         let stubbed_events = vec![FsEvent::Stop];
         let provider_stub = EventProviderStub::new(&stubbed_events);
         // when
-        FsEventDispatcher::new(&provider_stub, &processor_spy).handle();
+        FsEventDispatcher::new(&provider_stub, &processor_spy)
+            .handle()
+            .unwrap();
         // then
         assert_eq!(processor_spy.executed(), false);
     }
@@ -67,7 +72,9 @@ mod test {
         let stubbed_events = vec![FsEvent::Other, FsEvent::Stop];
         let provider_stub = EventProviderStub::new(&stubbed_events);
         // when
-        FsEventDispatcher::new(&provider_stub, &processor_spy).handle();
+        FsEventDispatcher::new(&provider_stub, &processor_spy)
+            .handle()
+            .unwrap();
         // then
         assert_eq!(processor_spy.executed(), false);
     }
@@ -115,8 +122,9 @@ mod test {
     }
 
     impl EventProcessor for EventProcessorSpy {
-        fn process<P: AsRef<Path>>(&self, _path: P) {
+        fn process<P: AsRef<Path>>(&self, _path: P) -> Result<()> {
             *self.executed.borrow_mut() = true;
+            Ok(())
         }
     }
 }
