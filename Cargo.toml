@@ -26,4 +26,3 @@ anyhow = "1.0.28"
 dirs = "2.0.2"
 config = "0.10.1"
 serde = { version =  "1.0.106", features = ["derive"] }
-thiserror = "1.0.16"
