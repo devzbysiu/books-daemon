@@ -23,7 +23,10 @@ impl<'a> NewBookEventProcessor<'a> {
             .arg(self.settings.device_mac())
             .arg(path.as_ref())
             .output()?;
-        println!("command finished with status code: {}", status_code(output));
+        println!(
+            "command finished with status code: {}",
+            status_code(&output)
+        );
         Ok(())
     }
 }
@@ -37,6 +40,6 @@ impl<'a> EventProcessor for NewBookEventProcessor<'a> {
     }
 }
 
-fn status_code(output: Output) -> i32 {
+fn status_code(output: &Output) -> i32 {
     output.status.code().expect("failed to get status code")
 }

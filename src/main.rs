@@ -28,12 +28,12 @@ fn main() {
         .privileged_action(|| "Executed before drop privileges");
 
     match daemonize.start() {
-        Ok(_) => watch_for_added_books(settings),
+        Ok(_) => watch_for_added_books(&settings),
         Err(e) => eprintln!("Error, {}", e),
     }
 }
 
-fn watch_for_added_books(settings: Settings) {
+fn watch_for_added_books(settings: &Settings) {
     println!("Success, daemonized");
     let (sender, receiver) = channel();
 

@@ -1,6 +1,5 @@
 use anyhow::{bail, Result};
 use config::{Config, File};
-use dirs;
 use serde::Deserialize;
 use std::path::PathBuf;
 
