@@ -16,12 +16,14 @@ impl NewBookEventProcessor {
 impl EventProcessor for NewBookEventProcessor {
     fn process<P: AsRef<Path>>(&self, path: P) {
         println!("new file created: {:?}", path.as_ref());
-        Command::new("bt-obex")
+        println!("sending new file via bluetooth");
+        let output = Command::new("bt-obex")
             .stdout(Stdio::inherit())
             .arg("-p")
             .arg("64:A2:F9:E9:AE:C3")
             .arg(path.as_ref())
             .output()
             .expect("failed sending file via bt-obex");
+        println!("file sending result: {}", output.status);
     }
 }
