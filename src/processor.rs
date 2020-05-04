@@ -24,7 +24,7 @@ impl<'a> NewBookEventProcessor<'a> {
             .arg(path.as_ref())
             .output()?;
         println!(
-            "command finished with status code: {}",
+            "command finished with a status code: {}",
             status_code(&output)
         );
         Ok(())
