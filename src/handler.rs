@@ -1,5 +1,6 @@
 use crate::processor::EventProcessor;
 use crate::provider::{EventProvider, FsEvent};
+use anyhow::Result;
 
 pub(crate) struct FsEventDispatcher<'a, R: EventProvider, P: EventProcessor> {
     provider: &'a R,
@@ -14,15 +15,16 @@ impl<'a, R: EventProvider, P: EventProcessor> FsEventDispatcher<'a, R, P> {
         }
     }
 
-    pub(crate) fn handle(&self) {
+    pub(crate) fn handle(&self) -> Result<()> {
         loop {
             match self.provider.next() {
-                Ok(FsEvent::NewFile(p)) => self.processor.process(p),
+                Ok(FsEvent::NewFile(p)) => self.processor.process(p)?,
                 Ok(FsEvent::Other) => println!("different event"),
                 Ok(FsEvent::Stop) => break,
                 Err(e) => eprint!("watch error: {:?}", e),
             }
         }
+        Ok(())
     }
 }
 

@@ -43,5 +43,6 @@ fn watch_for_added_books() {
         &DebouncedEventAdapter::new(receiver),
         &NewBookEventProcessor::new(),
     )
-    .handle();
+    .handle()
+    .expect("failed to dispatch events");
 }
