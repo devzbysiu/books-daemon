@@ -43,10 +43,12 @@ mod test {
         let processor_spy = EventProcessorSpy::new();
         let events = vec![FsEvent::NewFile(PathBuf::from(r"/test")), FsEvent::Stop];
         let provider_stub = EventProviderStub::new(&events);
+
         // when
         FsEventDispatcher::new(&provider_stub, &processor_spy)
             .handle()
             .unwrap();
+
         // then
         assert_eq!(processor_spy.executed(), true);
     }
@@ -57,10 +59,12 @@ mod test {
         let processor_spy = EventProcessorSpy::new();
         let stubbed_events = vec![FsEvent::Stop];
         let provider_stub = EventProviderStub::new(&stubbed_events);
+
         // when
         FsEventDispatcher::new(&provider_stub, &processor_spy)
             .handle()
             .unwrap();
+
         // then
         assert_eq!(processor_spy.executed(), false);
     }
@@ -71,10 +75,12 @@ mod test {
         let processor_spy = EventProcessorSpy::new();
         let stubbed_events = vec![FsEvent::Other, FsEvent::Stop];
         let provider_stub = EventProviderStub::new(&stubbed_events);
+
         // when
         FsEventDispatcher::new(&provider_stub, &processor_spy)
             .handle()
             .unwrap();
+
         // then
         assert_eq!(processor_spy.executed(), false);
     }
