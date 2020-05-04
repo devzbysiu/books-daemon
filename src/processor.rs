@@ -23,7 +23,7 @@ impl<'a> NewBookEventProcessor<'a> {
             .arg(self.settings.device_mac())
             .arg(path.as_ref())
             .output()?;
-        check_status_code(output);
+        println!("command finished with status code: {}", status_code(output));
         Ok(())
     }
 }
@@ -34,17 +34,6 @@ impl<'a> EventProcessor for NewBookEventProcessor<'a> {
         println!("sending new file via bluetooth");
         self.send_file(path)?;
         Ok(())
-    }
-}
-
-fn check_status_code(output: Output) {
-    if output.status.success() {
-        println!("command finished with status code: {}", status_code(output));
-    } else {
-        eprint!(
-            "failed to send file via bluetooth, status code: {}",
-            status_code(output)
-        );
     }
 }
 
