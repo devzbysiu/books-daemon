@@ -20,7 +20,6 @@ fn main() {
     let settings = Settings::load().expect("failed to load settings");
 
     let daemonize = Daemonize::new()
-        .pid_file("/tmp/books-daemon.pid")
         .working_directory(settings.books_dir())
         .stdout(stdout)
         .stderr(stderr)
