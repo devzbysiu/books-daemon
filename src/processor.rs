@@ -4,7 +4,7 @@ use std::path::Path;
 use std::process::{Command, Output, Stdio};
 
 pub(crate) trait EventProcessor {
-    fn process<P: AsRef<Path>>(&self, path: P) -> Result<()>;
+    fn process(&self, path: &dyn AsRef<Path>) -> Result<()>;
 }
 
 pub(crate) struct NewBookEventProcessor<'a> {
@@ -32,7 +32,7 @@ impl<'a> NewBookEventProcessor<'a> {
 }
 
 impl<'a> EventProcessor for NewBookEventProcessor<'a> {
-    fn process<P: AsRef<Path>>(&self, path: P) -> Result<()> {
+    fn process(&self, path: &dyn AsRef<Path>) -> Result<()> {
         println!("new file created: {:?}", path.as_ref());
         println!("sending new file via bluetooth");
         self.send_file(path)?;

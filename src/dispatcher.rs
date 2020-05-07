@@ -1,15 +1,15 @@
 use crate::processor::EventProcessor;
-use crate::provider::{EventProvider, FsEvent};
+use crate::provider::{Event, EventProvider};
 use anyhow::Result;
 
-pub(crate) struct FsEventDispatcher<'a, R: EventProvider, P: EventProcessor> {
+pub(crate) struct EventDispatcher<'a, R: EventProvider, P: EventProcessor> {
     provider: &'a R,
     processor: &'a P,
 }
 
-impl<'a, R: EventProvider, P: EventProcessor> FsEventDispatcher<'a, R, P> {
+impl<'a, R: EventProvider, P: EventProcessor> EventDispatcher<'a, R, P> {
     pub(crate) fn new(provider: &'a R, processor: &'a P) -> Self {
-        FsEventDispatcher {
+        EventDispatcher {
             provider,
             processor,
         }
@@ -18,9 +18,9 @@ impl<'a, R: EventProvider, P: EventProcessor> FsEventDispatcher<'a, R, P> {
     pub(crate) fn handle(&self) -> Result<()> {
         loop {
             match self.provider.next() {
-                Ok(FsEvent::NewFile(p)) => self.processor.process(p)?,
-                Ok(FsEvent::Other) => println!("different event"),
-                Ok(FsEvent::Stop) => break,
+                Ok(Event::NewFile(p)) => self.processor.process(&p)?,
+                Ok(Event::Other) => println!("different event"),
+                Ok(Event::Stop) => break,
                 Err(e) => eprint!("watch error: {:?}", e),
             }
         }
@@ -30,8 +30,8 @@ impl<'a, R: EventProvider, P: EventProcessor> FsEventDispatcher<'a, R, P> {
 
 #[cfg(test)]
 mod test {
-    use super::{EventProcessor, FsEventDispatcher};
-    use crate::provider::{EventProvider, FsEvent};
+    use super::{EventDispatcher, EventProcessor};
+    use crate::provider::{Event, EventProvider};
     use anyhow::Result;
     use std::cell::RefCell;
     use std::path::{Path, PathBuf};
@@ -41,11 +41,11 @@ mod test {
     fn test_processor_executed_when_new_file_appeared() {
         // given
         let processor_spy = EventProcessorSpy::new();
-        let events = vec![FsEvent::NewFile(PathBuf::from(r"/test")), FsEvent::Stop];
+        let events = vec![Event::NewFile(PathBuf::from(r"/test")), Event::Stop];
         let provider_stub = EventProviderStub::new(&events);
 
         // when
-        FsEventDispatcher::new(&provider_stub, &processor_spy)
+        EventDispatcher::new(&provider_stub, &processor_spy)
             .handle()
             .unwrap();
 
@@ -57,11 +57,11 @@ mod test {
     fn test_processor_not_executed_when_no_new_file_event_occured() {
         // given
         let processor_spy = EventProcessorSpy::new();
-        let stubbed_events = vec![FsEvent::Stop];
+        let stubbed_events = vec![Event::Stop];
         let provider_stub = EventProviderStub::new(&stubbed_events);
 
         // when
-        FsEventDispatcher::new(&provider_stub, &processor_spy)
+        EventDispatcher::new(&provider_stub, &processor_spy)
             .handle()
             .unwrap();
 
@@ -73,11 +73,11 @@ mod test {
     fn test_processor_not_executed_when_other_event_occured() {
         // given
         let processor_spy = EventProcessorSpy::new();
-        let stubbed_events = vec![FsEvent::Other, FsEvent::Stop];
+        let stubbed_events = vec![Event::Other, Event::Stop];
         let provider_stub = EventProviderStub::new(&stubbed_events);
 
         // when
-        FsEventDispatcher::new(&provider_stub, &processor_spy)
+        EventDispatcher::new(&provider_stub, &processor_spy)
             .handle()
             .unwrap();
 
@@ -86,12 +86,12 @@ mod test {
     }
 
     struct EventProviderStub {
-        events: Vec<FsEvent>,
+        events: Vec<Event>,
         current_event: RefCell<usize>,
     }
 
     impl EventProviderStub {
-        fn new(events: &[FsEvent]) -> Self {
+        fn new(events: &[Event]) -> Self {
             if events.is_empty() {
                 panic!("events should have at least stop event present");
             }
@@ -103,7 +103,7 @@ mod test {
     }
 
     impl EventProvider for EventProviderStub {
-        fn next(&self) -> Result<FsEvent, RecvError> {
+        fn next(&self) -> Result<Event, RecvError> {
             let idx = self.current_event.clone().into_inner();
             let res = self.events[idx].clone();
             *self.current_event.borrow_mut() += 1;
@@ -128,7 +128,7 @@ mod test {
     }
 
     impl EventProcessor for EventProcessorSpy {
-        fn process<P: AsRef<Path>>(&self, _path: P) -> Result<()> {
+        fn process(&self, _path: &dyn AsRef<Path>) -> Result<()> {
             *self.executed.borrow_mut() = true;
             Ok(())
         }

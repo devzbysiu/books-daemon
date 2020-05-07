@@ -1,11 +1,14 @@
 use std::fs::File;
 
-use crate::dispatcher::FsEventDispatcher;
+use crate::dispatcher::EventDispatcher;
 use crate::processor::NewBookEventProcessor;
 use crate::provider::DebouncedEventAdapter;
 use crate::settings::Settings;
 use daemonize::Daemonize;
 use notify::{watcher, RecursiveMode, Watcher};
+use processor::EventProcessor;
+use provider::Event;
+use std::collections::HashMap;
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
@@ -42,7 +45,8 @@ fn watch_for_added_books(settings: &Settings) {
         .watch(settings.books_dir(), RecursiveMode::Recursive)
         .unwrap();
 
-    FsEventDispatcher::new(
+    let _processors: HashMap<Event, Box<dyn EventProcessor>> = HashMap::new();
+    EventDispatcher::new(
         &DebouncedEventAdapter::new(receiver),
         &NewBookEventProcessor::new(&settings),
     )

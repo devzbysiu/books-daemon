@@ -3,11 +3,11 @@ use std::path::PathBuf;
 use std::sync::mpsc::{Receiver, RecvError};
 
 pub(crate) trait EventProvider {
-    fn next(&self) -> Result<FsEvent, RecvError>;
+    fn next(&self) -> Result<Event, RecvError>;
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub(crate) enum FsEvent {
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub(crate) enum Event {
     // for testing purposes
     #[allow(dead_code)]
     Stop,
@@ -26,10 +26,10 @@ impl DebouncedEventAdapter {
 }
 
 impl EventProvider for DebouncedEventAdapter {
-    fn next(&self) -> Result<FsEvent, RecvError> {
+    fn next(&self) -> Result<Event, RecvError> {
         match self.receiver.recv() {
-            Ok(DebouncedEvent::Create(p)) => Ok(FsEvent::NewFile(p)),
-            Ok(_) => Ok(FsEvent::Other),
+            Ok(DebouncedEvent::Create(p)) => Ok(Event::NewFile(p)),
+            Ok(_) => Ok(Event::Other),
             Err(e) => Err(e),
         }
     }
@@ -37,7 +37,7 @@ impl EventProvider for DebouncedEventAdapter {
 
 #[cfg(test)]
 mod test {
-    use crate::provider::{DebouncedEventAdapter, EventProvider, FsEvent};
+    use crate::provider::{DebouncedEventAdapter, Event, EventProvider};
     use notify::DebouncedEvent;
     use std::path::PathBuf;
     use std::sync::mpsc::channel;
@@ -56,7 +56,7 @@ mod test {
         // then
         assert_eq!(
             provider.next().unwrap(),
-            FsEvent::NewFile(PathBuf::from("/test")),
+            Event::NewFile(PathBuf::from("/test")),
         );
     }
 
@@ -91,12 +91,12 @@ mod test {
         sender.send(DebouncedEvent::Rescan).unwrap();
 
         // then
-        assert_eq!(FsEvent::Other, provider.next().unwrap());
-        assert_eq!(FsEvent::Other, provider.next().unwrap());
-        assert_eq!(FsEvent::Other, provider.next().unwrap());
-        assert_eq!(FsEvent::Other, provider.next().unwrap());
-        assert_eq!(FsEvent::Other, provider.next().unwrap());
-        assert_eq!(FsEvent::Other, provider.next().unwrap());
-        assert_eq!(FsEvent::Other, provider.next().unwrap());
+        assert_eq!(Event::Other, provider.next().unwrap());
+        assert_eq!(Event::Other, provider.next().unwrap());
+        assert_eq!(Event::Other, provider.next().unwrap());
+        assert_eq!(Event::Other, provider.next().unwrap());
+        assert_eq!(Event::Other, provider.next().unwrap());
+        assert_eq!(Event::Other, provider.next().unwrap());
+        assert_eq!(Event::Other, provider.next().unwrap());
     }
 }
