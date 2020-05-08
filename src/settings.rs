@@ -43,11 +43,11 @@ impl Settings {
     }
 }
 
-fn config_path() -> Result<String> {
+pub(crate) fn config_path() -> Result<String> {
     if let Some(config_dir) = dirs::config_dir() {
         return Ok(format!("{}/books-daemon.toml", into_string(config_dir)?));
     }
-    bail!("Failed to read config directory")
+    bail!("failed to read config directory")
 }
 
 fn into_string(path: PathBuf) -> Result<String> {
