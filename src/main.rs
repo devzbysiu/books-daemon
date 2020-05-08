@@ -60,8 +60,7 @@ fn watch_for_added_books(settings: &Settings) -> Result<()> {
     println!("Success, daemonized");
     let (sender, receiver) = channel();
 
-    let mut watcher = watcher(sender, Duration::from_secs(settings.interval()))
-        .expect("failed to create watcher");
+    let mut watcher = watcher(sender, Duration::from_secs(settings.interval()))?;
     watcher.watch(settings.books_dir(), RecursiveMode::Recursive)?;
 
     EventDispatcher::new(
