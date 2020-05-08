@@ -8,6 +8,8 @@ pub(crate) struct Settings {
     interval: u64,
     books_dir: String,
     device_mac: String,
+    stdout_file: String,
+    stderr_file: String,
 }
 
 impl Settings {
@@ -30,6 +32,14 @@ impl Settings {
 
     pub(crate) fn device_mac(&self) -> &str {
         &self.device_mac
+    }
+
+    pub(crate) fn stdout_file(&self) -> &str {
+        &self.stdout_file
+    }
+
+    pub(crate) fn stderr_file(&self) -> &str {
+        &self.stderr_file
     }
 }
 

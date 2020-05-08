@@ -20,8 +20,8 @@ fn main() -> Result<()> {
 
     let daemonize = Daemonize::new()
         .working_directory(settings.books_dir())
-        .stdout(File::create("/tmp/books-daemon.out")?)
-        .stderr(File::create("/tmp/books-daemon.err")?);
+        .stdout(File::create(settings.stdout_file())?)
+        .stderr(File::create(settings.stderr_file())?);
 
     match daemonize.start() {
         Ok(_) => watch_for_added_books(&settings)?,

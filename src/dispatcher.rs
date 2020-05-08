@@ -19,7 +19,7 @@ impl<'a, R: EventProvider, P: EventProcessor> EventDispatcher<'a, R, P> {
         loop {
             match self.provider.next() {
                 Ok(Event::NewFile(p)) => self.processor.process(&p)?,
-                Ok(Event::Other) => println!("different event"),
+                Ok(Event::Other) => println!("different event occured"),
                 Ok(Event::Stop) => break,
                 Err(e) => eprint!("watch error: {:?}", e),
             }
