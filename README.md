@@ -4,7 +4,7 @@
 
   <p>
     <strong>Listen for new books added under specified directory and send them via bluetooth to
-    specified device</strong>
+    specified device.</strong>
   </p>
 
   <p>
@@ -61,8 +61,8 @@ Example configuration is shown below. `books-daemon` will look for settings file
 interval = 2 # how often check the content of the book_dir
 books_dir = "/home/zbychu/books" # where should it listen for new books
 device_mac = "64:A2:F9:E9:AE:C3" # device MAC number to which new books should be send
-stdout_file = "/tmp/books_daemon.out"
-stderr_file = "/tmp/books_daemon.err"
+stdout_file = "/tmp/books_daemon.out" # stdout logs
+stderr_file = "/tmp/books_daemon.err" # stderr logs
 ```
 
 # <p id="license">License</p>
