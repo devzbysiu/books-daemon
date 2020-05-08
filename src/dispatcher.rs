@@ -15,7 +15,7 @@ impl<'a, R: EventProvider, P: EventProcessor> EventDispatcher<'a, R, P> {
         }
     }
 
-    pub(crate) fn handle(&self) -> Result<()> {
+    pub(crate) fn dispatch(&self) -> Result<()> {
         loop {
             match self.provider.next() {
                 Ok(Event::NewFile(p)) => self.processor.process(&p)?,
@@ -46,7 +46,7 @@ mod test {
 
         // when
         EventDispatcher::new(&provider_stub, &processor_spy)
-            .handle()
+            .dispatch()
             .unwrap();
 
         // then
@@ -62,7 +62,7 @@ mod test {
 
         // when
         EventDispatcher::new(&provider_stub, &processor_spy)
-            .handle()
+            .dispatch()
             .unwrap();
 
         // then
@@ -78,7 +78,7 @@ mod test {
 
         // when
         EventDispatcher::new(&provider_stub, &processor_spy)
-            .handle()
+            .dispatch()
             .unwrap();
 
         // then
