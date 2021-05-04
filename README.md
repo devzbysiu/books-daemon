@@ -8,16 +8,7 @@
   </h3>
 
   <p>
-    <img src="https://github.com/devzbysiu/books-daemon/workflows/CI/badge.svg" alt="CI status
-    badge" />
-    <a href="https://codecov.io/gh/devzbysiu/books-daemon">
-      <img src="https://img.shields.io/codecov/c/github/devzbysiu/books-daemon?style=for-the-badge&token=f2339b3de9e44be0a902458a669c1160" alt="Code coverage"/>
-    </a>
-    <a href="https://crates.io/crates/books-daemon">
-      <img src="https://img.shields.io/crates/l/books-daemon?style=for-the-badge" alt="License"/>
-    </a>
-    <a href="https://docs.rs/books-daemon">
-      <img src="https://img.shields.io/badge/docs-latest-blue.svg?style=for-the-badge" alt="docs.rs docs" />
+    <img src="https://img.shields.io/github/workflow/status/devzbysiu/books-daemon/ci?style=for-the-badge" alt="CI status badge" />
     </a>
   </p>
 
@@ -38,7 +29,7 @@
 
 # <p id="about">About</p>
 
-The idea is simple. When you execute this program, it will go to the background and it will start
+When you execute this program, it will go to the background and it will start
 watching for the changes under specified (in settings file) directory.
 
 When new file appears, daemon picks it up and sends it via bluetooth to specified device.
@@ -48,9 +39,15 @@ software working.
 
 See [configuration](#configuration) section to see what can be configured.
 
+This software is rather for my internal use, but if you find it useful you can do stuff with it.
+
 # <p id="installation">Installation</p>
 
-## --- TODO ---
+Currently only Linux is supported.
+- go to [releases](https://github.com/devzbysiu/je/releases) page
+- download the latest `books-daemon` archive
+- extract it
+- run `books-daemon`
 
 # <p id="configuration">Configuration</p>
 
@@ -60,7 +57,7 @@ Example configuration is shown below. `books-daemon` will look for settings file
 ```toml
 interval = 2                          # how often check the content of the books_dir
 books_dir = "/home/zbychu/books"      # where should it listen for new books
-device_mac = "64:A2:F9:E9:AE:C3"      # device MAC number to which new books should be send
+device_mac = "64:A5:F0:E9:AE:C6"      # device MAC number to which new books should be send
 stdout_file = "/tmp/books_daemon.out" # stdout logs
 stderr_file = "/tmp/books_daemon.err" # stderr logs
 ```
