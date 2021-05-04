@@ -44,7 +44,7 @@ This software is rather for my internal use, but if you find it useful you can d
 # <p id="installation">Installation</p>
 
 Currently only Linux is supported.
-- go to [releases](https://github.com/devzbysiu/je/releases) page
+- go to [releases](https://github.com/devzbysiu/books-daemon/releases) page
 - download the latest `books-daemon` archive
 - extract it
 - run `books-daemon`
