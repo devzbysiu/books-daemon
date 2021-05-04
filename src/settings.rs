@@ -45,14 +45,13 @@ impl Settings {
 
 pub(crate) fn config_path() -> Result<String> {
     if let Some(config_dir) = dirs::config_dir() {
-        return Ok(format!("{}/books-daemon.toml", into_string(config_dir)?));
+        return Ok(format!("{}/books-daemon.toml", into_string(config_dir)));
     }
     bail!("failed to read config directory")
 }
 
-fn into_string(path: PathBuf) -> Result<String> {
-    Ok(path
-        .into_os_string()
+fn into_string(path: PathBuf) -> String {
+    path.into_os_string()
         .into_string()
-        .expect("failed to convert os string to string"))
+        .expect("failed to convert os string to string")
 }
