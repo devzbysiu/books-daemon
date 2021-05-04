@@ -47,7 +47,7 @@ Currently only Linux is supported.
 - go to [releases](https://github.com/devzbysiu/books-daemon/releases) page
 - download the latest `books-daemon` archive
 - extract it
-- run `books-daemon`
+- run `books_daemon`
 
 # <p id="configuration">Configuration</p>
 
