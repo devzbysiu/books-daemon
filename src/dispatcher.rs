@@ -50,7 +50,7 @@ mod test {
             .unwrap();
 
         // then
-        assert_eq!(processor_spy.executed(), true);
+        assert!(processor_spy.executed());
     }
 
     #[test]
@@ -66,7 +66,7 @@ mod test {
             .unwrap();
 
         // then
-        assert_eq!(processor_spy.executed(), false);
+        assert!(!processor_spy.executed());
     }
 
     #[test]
@@ -82,7 +82,7 @@ mod test {
             .unwrap();
 
         // then
-        assert_eq!(processor_spy.executed(), false);
+        assert!(!processor_spy.executed());
     }
 
     struct EventProviderStub {
@@ -92,9 +92,10 @@ mod test {
 
     impl EventProviderStub {
         fn new(events: &[Event]) -> Self {
-            if events.is_empty() {
-                panic!("events should have at least stop event present");
-            }
+            assert!(
+                !events.is_empty(),
+                "events should have at least stop event present"
+            );
             EventProviderStub {
                 events: events.to_vec(),
                 current_event: RefCell::new(0),

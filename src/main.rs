@@ -65,7 +65,7 @@ fn watch_for_added_books(settings: &Settings) -> Result<()> {
 
     EventDispatcher::new(
         &DebouncedEventAdapter::new(receiver),
-        &NewBookEventProcessor::new(&settings),
+        &NewBookEventProcessor::new(settings),
     )
     .dispatch()?;
 
