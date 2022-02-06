@@ -8,6 +8,6 @@ edition = "2021"
 daemonize = "0.4.1"
 notify = "4.0.15"
 anyhow = "1.0.28"
-dirs = "3.0.1"
+dirs = "4.0.0"
 config = "0.10.1"
 serde = { version =  "1.0.106", features = ["derive"] }
