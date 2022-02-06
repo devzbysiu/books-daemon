@@ -2,7 +2,7 @@
 name = "books_daemon"
 version = "0.1.0"
 authors = ["Bartosz Zbytniewski <bartosz.zbytniewski.dev@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 daemonize = "0.4.1"
