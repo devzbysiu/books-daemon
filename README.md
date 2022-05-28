@@ -29,7 +29,7 @@
 
 # <p id="about">About</p>
 
-When you execute this program, it will go to the background and it will start
+When you execute this program, it will go to the background, and it will start
 watching for the changes under specified (in settings file) directory.
 
 When new file appears, daemon picks it up and sends it via bluetooth to specified device.
@@ -43,7 +43,7 @@ This software is rather for my internal use, but if you find it useful you can d
 
 # <p id="installation">Installation</p>
 
-Currently only Linux is supported.
+Currently, only Linux is supported.
 - go to [releases](https://github.com/devzbysiu/books-daemon/releases) page
 - download the latest `books-daemon` archive
 - extract it
