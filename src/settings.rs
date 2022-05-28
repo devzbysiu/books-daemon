@@ -21,7 +21,7 @@ impl Settings {
             .into())
     }
 
-    fn new(config: Config) -> Result<Self> {
+    fn new(config: &Config) -> Result<Self> {
         Ok(Self {
             interval: config.get_int("interval")?,
             books_dir: config.get_string("books_dir")?,
@@ -54,7 +54,7 @@ impl Settings {
 
 impl From<Config> for Settings {
     fn from(cfg: Config) -> Self {
-        Self::new(cfg).expect("failed to create settings from config")
+        Self::new(&cfg).expect("failed to create settings from config")
     }
 }
 
