@@ -1,11 +1,11 @@
 use anyhow::{bail, Result};
-use config::{Config, File};
+use config::{Config, Environment, File};
 use serde::Deserialize;
 use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Settings {
-    interval: u64,
+    interval: i64,
     books_dir: String,
     device_mac: String,
     stdout_file: String,
@@ -14,16 +14,25 @@ pub(crate) struct Settings {
 
 impl Settings {
     pub(crate) fn load() -> Result<Self> {
-        let mut config = Config::new();
-        config.merge(File::with_name(&config_path()?))?;
-        match config.try_into() {
-            Ok(config) => Ok(config),
-            Err(e) => bail!("failed to read config: {}", e),
-        }
+        Ok(Config::builder()
+            .add_source(File::with_name(&config_path()?))
+            .add_source(Environment::with_prefix("BOOKS_DAEMON"))
+            .build()?
+            .into())
+    }
+
+    fn new(config: Config) -> Result<Self> {
+        Ok(Self {
+            interval: config.get_int("interval")?,
+            books_dir: config.get_string("books_dir")?,
+            device_mac: config.get_string("device_mac")?,
+            stdout_file: config.get_string("stdout_file")?,
+            stderr_file: config.get_string("stderr_file")?,
+        })
     }
 
     pub(crate) fn interval(&self) -> u64 {
-        self.interval
+        self.interval as u64
     }
 
     pub(crate) fn books_dir(&self) -> &str {
@@ -40,6 +49,12 @@ impl Settings {
 
     pub(crate) fn stderr_file(&self) -> &str {
         &self.stderr_file
+    }
+}
+
+impl From<Config> for Settings {
+    fn from(cfg: Config) -> Self {
+        Self::new(cfg).expect("failed to create settings from config")
     }
 }
 
