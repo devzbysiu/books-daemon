@@ -31,6 +31,7 @@ impl Settings {
         })
     }
 
+    #[allow(clippy::cast_sign_loss)]
     pub(crate) fn interval(&self) -> u64 {
         self.interval as u64
     }
