@@ -8,7 +8,7 @@
   </h3>
 
   <p>
-    <img src="https://img.shields.io/github/workflow/status/devzbysiu/books-daemon/ci?style=for-the-badge" alt="CI status badge" />
+    <img src="https://img.shields.io/github/actions/workflow/status/devzbysiu/books-daemon/ci.yml?style=for-the-badge" alt="CI status badge" />
     </a>
   </p>
 
